@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400;1,9..144,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="hero.jpeg" fetchpriority="high">
 
 
 <style>
@@ -98,12 +99,60 @@
     display: grid;
     grid-template-columns: 1fr;
     overflow: hidden;
-    background-image:
-      linear-gradient(180deg, rgba(24,20,16,0.55) 0%, rgba(24,20,16,0.2) 35%, rgba(24,20,16,0.7) 75%, rgba(24,20,16,1) 100%),
-      linear-gradient(90deg, rgba(199,93,44,0.08), transparent 40%),
-      url('hero.jpeg');
+    background-color: var(--bg);
+    isolation: isolate;
+  }
+
+  /* dedicated background layer — fades in smoothly once the image is decoded
+     and gets a slow Ken-Burns drift + scroll-parallax via a CSS variable. */
+  .hero-bg {
+    position: absolute;
+    inset: -6% -2% -2% -2%;          /* small bleed so parallax never reveals edges */
+    z-index: 0;
+    background-image: url('hero.jpeg');
     background-size: cover;
-    background-position: center;
+    background-position: center 35%;
+    opacity: 0;
+    transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1.08);
+    will-change: opacity, transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .hero-bg.loaded {
+    animation:
+      heroIntro 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+      heroDrift 28s ease-in-out 1.6s infinite alternate;
+  }
+  @keyframes heroIntro {
+    from {
+      opacity: 0;
+      transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1.08);
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1);
+      filter: blur(0);
+    }
+  }
+  @keyframes heroDrift {
+    from { background-position: center 35%; }
+    to   { background-position: center 42%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-bg { transform: none; transition: opacity 0.6s ease; }
+    .hero-bg.loaded { animation: none; opacity: 1; transform: none; filter: none; }
+  }
+
+  /* overlay gradients sit above the image but below the content */
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(24,20,16,0.55) 0%, rgba(24,20,16,0.2) 35%, rgba(24,20,16,0.7) 75%, rgba(24,20,16,1) 100%),
+      linear-gradient(90deg, rgba(199,93,44,0.08), transparent 40%);
   }
 
   .hero-content {
@@ -179,6 +228,28 @@
     gap: 0.6rem;
   }
   .hero-tag .scroll::after { content: "↓"; font-family: var(--serif); font-size: 1rem; }
+
+  /* hero socials */
+  .hero-socials {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+  }
+  .hero-socials a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.75;
+    transition: opacity 0.3s, color 0.3s, transform 0.3s;
+  }
+  .hero-socials a:hover { opacity: 1; color: var(--rust); transform: translateY(-1px); }
+  .hero-socials svg { width: 15px; height: 15px; display: block; }
+  .hero-socials .label { display: inline-block; }
 
   /* corner ticks */
   .tick {
@@ -428,6 +499,8 @@
     nav.top .links a:nth-child(2) { display: none; }
     .tick.tl, .tick.tr { display: none; }
     .hero-content { padding: 5rem 1.2rem 2rem; }
+    .hero-socials { gap: 1rem; }
+    .hero-socials .label { display: none; }
     section { padding: 5rem 1.2rem; }
     .about { grid-template-columns: 1fr; gap: 2rem; }
     .listen-grid { grid-template-columns: 1fr; }
@@ -456,6 +529,9 @@
 </nav>
 
 <header class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-overlay" aria-hidden="true"></div>
+
   <div class="tick tl">EST. AMS · LDN<br>—</div>
   <div class="tick tr">ROLL 04 / FRAME 12<br>2026</div>
 
@@ -469,6 +545,20 @@
       <h1 class="hero-title">Scoob<span class="ital">E</span>.</h1>
       <div class="hero-tag">
         <p class="quote">"Stuck in a loop of escaping reality, yet trying to find my way back."</p>
+        <div class="hero-socials">
+          <a href="https://open.spotify.com/artist/1j2URuhHaS0eupuzzr0ojM" target="_blank" rel="noopener" aria-label="Spotify">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24Zm5.5 17.3a.75.75 0 0 1-1 .25c-2.8-1.7-6.3-2.1-10.4-1.1a.75.75 0 1 1-.34-1.46c4.5-1 8.4-.6 11.5 1.3.36.22.47.69.24 1.02Zm1.5-3.3a.94.94 0 0 1-1.3.3c-3.2-2-8.1-2.55-11.9-1.4a.94.94 0 1 1-.55-1.8c4.4-1.32 9.8-.7 13.5 1.6.45.27.6.85.25 1.3Zm.13-3.43c-3.85-2.28-10.2-2.5-13.85-1.38a1.13 1.13 0 1 1-.66-2.16c4.2-1.28 11.2-1.03 15.65 1.6a1.13 1.13 0 1 1-1.14 1.94Z"/></svg>
+            <span class="label">Spotify</span>
+          </a>
+          <a href="https://music.youtube.com/channel/UCZMUWmyzi1vCIoaL8Xiw1Dg" target="_blank" rel="noopener" aria-label="YouTube Music">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24Zm0 4.6a7.4 7.4 0 1 1 0 14.8 7.4 7.4 0 0 1 0-14.8Zm-2.1 3.6v7.6L16.4 12 9.9 8.2Z"/></svg>
+            <span class="label">YT Music</span>
+          </a>
+          <a href="https://www.instagram.com/scoo6e/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
+            <span class="label">Instagram</span>
+          </a>
+        </div>
         <span class="scroll">scroll</span>
       </div>
     </div>
@@ -598,6 +688,47 @@
     });
   }, { threshold: 0.12 });
   reveals.forEach(el => io.observe(el));
+
+  // smooth hero image: preload + decode -> fade in, then subtle scroll parallax.
+  (() => {
+    const heroBg = document.querySelector('.hero-bg');
+    const hero = document.querySelector('.hero');
+    if (!heroBg || !hero) return;
+
+    const reveal = () => heroBg.classList.add('loaded');
+    const img = new Image();
+    img.src = 'hero.jpeg';
+    if (img.decode) {
+      img.decode().then(reveal).catch(reveal);
+    } else if (img.complete) {
+      reveal();
+    } else {
+      img.onload = reveal;
+      img.onerror = reveal;
+    }
+    // safety net
+    setTimeout(reveal, 1500);
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const rect = hero.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+      // gentle drift — image moves slower than the page
+      const offset = Math.max(-200, Math.min(0, rect.top * 0.35));
+      heroBg.style.setProperty('--hero-parallax', offset + 'px');
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    }, { passive: true });
+    update();
+  })();
 </script>
 
 </body>
