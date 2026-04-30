@@ -844,7 +844,8 @@
     const mount   = hero && hero.querySelector('.hero-video');
     const trigger = document.querySelector('[data-toggle-video]');
     if (!hero || !mount || !trigger) return;
-    const VIDEO_SRC = 'https://www.youtube-nocookie.com/embed/h9L91mFvWbc?rel=0&autoplay=1&modestbranding=1&playsinline=1&controls=1';
+    // loop=1 + playlist=<id> is required for YouTube embeds to repeat indefinitely
+    const VIDEO_SRC = 'https://www.youtube-nocookie.com/embed/h9L91mFvWbc?rel=0&autoplay=1&modestbranding=1&playsinline=1&controls=1&loop=1&playlist=h9L91mFvWbc';
 
     const play = () => {
       const iframe = document.createElement('iframe');
