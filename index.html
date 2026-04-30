@@ -104,16 +104,16 @@
   }
 
   /* dedicated background layer — fades in smoothly once the image is decoded
-     and gets a slow Ken-Burns drift + scroll-parallax via a CSS variable. */
+     and gets a slow Ken-Burns drift. */
   .hero-bg {
     position: absolute;
-    inset: -6% -2% -2% -2%;          /* small bleed so parallax never reveals edges */
+    inset: -2%;
     z-index: 0;
     background-image: url('hero.jpeg');
     background-size: cover;
     background-position: center 35%;
     opacity: 0;
-    transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1.08);
+    transform: scale(1.08);
     will-change: opacity, transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -126,12 +126,12 @@
   @keyframes heroIntro {
     from {
       opacity: 0;
-      transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1.08);
+      transform: scale(1.08);
       filter: blur(8px);
     }
     to {
       opacity: 1;
-      transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1);
+      transform: scale(1);
       filter: blur(0);
     }
   }
@@ -738,11 +738,10 @@
   }, { threshold: 0.12 });
   reveals.forEach(el => io.observe(el));
 
-  // smooth hero image: preload + decode -> fade in, then subtle scroll parallax.
+  // smooth hero image: preload + decode -> fade in.
   (() => {
     const heroBg = document.querySelector('.hero-bg');
-    const hero = document.querySelector('.hero');
-    if (!heroBg || !hero) return;
+    if (!heroBg) return;
 
     const reveal = () => heroBg.classList.add('loaded');
     const img = new Image();
@@ -757,26 +756,6 @@
     }
     // safety net
     setTimeout(reveal, 1500);
-
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) return;
-
-    let ticking = false;
-    const update = () => {
-      ticking = false;
-      const rect = hero.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-      // gentle drift — image moves slower than the page
-      const offset = Math.max(-200, Math.min(0, rect.top * 0.35));
-      heroBg.style.setProperty('--hero-parallax', offset + 'px');
-    };
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(update);
-        ticking = true;
-      }
-    }, { passive: true });
-    update();
   })();
 </script>
 
