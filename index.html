@@ -532,6 +532,86 @@
     font-weight: 600;
   }
 
+  /* ---------- WATCH CAROUSEL ---------- */
+  .watch-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .watch-text { flex: 1 1 420px; min-width: 0; }
+  .watch-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .watch-desc {
+    color: var(--cream-dim);
+    font-size: 1.05rem;
+    max-width: 55ch;
+  }
+  .watch-text-fade { transition: opacity 0.25s ease; }
+  .watch-carousel.swapping .watch-text-fade { opacity: 0; }
+
+  .watch-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    flex-shrink: 0;
+  }
+  .watch-nav {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--cream);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  }
+  .watch-nav svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .watch-nav:hover,
+  .watch-nav:focus-visible {
+    background: var(--rust);
+    border-color: var(--rust);
+    color: var(--cream);
+    outline: none;
+    transform: translateY(-1px);
+  }
+  .watch-counter .cur { color: var(--rust); }
+
+  .video-stage-fade { transition: opacity 0.25s ease; }
+  .watch-carousel.swapping .video-stage-fade { opacity: 0.15; }
+
+  @media (max-width: 640px) {
+    .watch-header { align-items: flex-start; }
+    .watch-controls { width: 100%; justify-content: space-between; }
+  }
+
   /* ---------- SOCIAL FOOTER ---------- */
   footer {
     border-top: 1px solid var(--line);
@@ -689,7 +769,7 @@
       </button>
       <h1 class="hero-title">Scoob<span class="ital">E</span>.</h1>
       <div class="hero-tag">
-        <p class="quote">"Stuck in a loop of escaping reality, yet trying to find my way back."</p>
+        <p class="quote">"A crumbling romance bound by substance and false intent — the loop, the comfort, the bitter truth."</p>
         <div class="hero-socials">
           <a href="https://open.spotify.com/artist/1j2URuhHaS0eupuzzr0ojM" target="_blank" rel="noopener" aria-label="Spotify">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24Zm5.5 17.3a.75.75 0 0 1-1 .25c-2.8-1.7-6.3-2.1-10.4-1.1a.75.75 0 1 1-.34-1.46c4.5-1 8.4-.6 11.5 1.3.36.22.47.69.24 1.02Zm1.5-3.3a.94.94 0 0 1-1.3.3c-3.2-2-8.1-2.55-11.9-1.4a.94.94 0 1 1-.55-1.8c4.4-1.32 9.8-.7 13.5 1.6.45.27.6.85.25 1.3Zm.13-3.43c-3.85-2.28-10.2-2.5-13.85-1.38a1.13 1.13 0 1 1-.66-2.16c4.2-1.28 11.2-1.03 15.65 1.6a1.13 1.13 0 1 1-1.14 1.94Z"/></svg>
@@ -777,17 +857,26 @@
 
 <section id="watch" class="reveal">
   <div class="section-label">003 — watch</div>
-  <h2 style="font-family: var(--serif); font-weight: 300; font-style: italic; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; letter-spacing: -0.02em; margin-bottom: 0.5rem;">Back and Forth.</h2>
-  <p style="color: var(--cream-dim); font-size: 1.05rem; margin-bottom: 2rem; max-width: 55ch;">A crumbling romance bound by substance and false intent — the loop, the comfort, the bitter truth.</p>
 
-  <div class="video-block">
-    <div class="video-wrap">
-      <button type="button" class="video-poster" aria-label="Play ScoobE — Back and Forth"
-              data-embed="https://www.youtube-nocookie.com/embed/h9L91mFvWbc?rel=0&autoplay=1&modestbranding=1&playsinline=1"></button>
+  <div class="watch-carousel" data-index="0">
+    <div class="watch-header">
+      <div class="watch-text watch-text-fade">
+        <h2 class="watch-title" data-watch-title>Back and Forth.</h2>
+        <p class="watch-desc" data-watch-desc>A crumbling romance bound by substance and false intent — the loop, the comfort, the bitter truth.</p>
+      </div>
+      <div class="watch-controls">
+        <button type="button" class="watch-nav" data-watch-prev aria-label="Previous video"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg></button>
+        <span class="watch-counter"><span class="cur" data-watch-cur>01</span> / <span data-watch-total>04</span></span>
+        <button type="button" class="watch-nav" data-watch-next aria-label="Next video"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
+      </div>
     </div>
-    <div class="video-caption">
-      <span><em>Back and Forth</em> &nbsp; · &nbsp; dir. Roisin · 2021</span>
-      <span>04:13</span>
+
+    <div class="video-block">
+      <div class="video-wrap video-stage-fade" data-watch-stage></div>
+      <div class="video-caption">
+        <span><em data-watch-cap-title>Back and Forth</em><span data-watch-cap-meta> &nbsp; · &nbsp; dir. Roisin · 2021</span></span>
+        <span data-watch-cap-time>04:13</span>
+      </div>
     </div>
   </div>
 </section>
@@ -823,20 +912,134 @@
 </footer>
 
 <script>
-  // click-to-play YouTube poster — swaps in the iframe (with autoplay) only on demand,
-  // so YouTube's UI never appears until the user activates it.
-  document.querySelectorAll('.video-poster').forEach((poster) => {
-    poster.addEventListener('click', () => {
-      const src = poster.getAttribute('data-embed');
-      if (!src) return;
-      const iframe = document.createElement('iframe');
-      iframe.src = src;
-      iframe.title = poster.getAttribute('aria-label') || '';
-      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-      iframe.setAttribute('allowfullscreen', '');
-      poster.replaceWith(iframe);
-    }, { once: true });
-  });
+  // ---------- WATCH CAROUSEL ----------
+  // Click-to-play YouTube poster — swaps in the iframe (with autoplay) only on demand,
+  // so YouTube's UI never appears until the user activates it. Left/right arrows (or
+  // keyboard ←/→ when the section is in view) rotate between videos and reset the stage
+  // back to the poster, so audio from a previous track is fully unmounted.
+  (() => {
+    const carousel = document.querySelector('.watch-carousel');
+    if (!carousel) return;
+
+    const tracks = [
+    {
+      id: 'Ery27Wt3kYI',
+      title: 'D.Y.G.M.',
+      desc: 'Do you get me? — the question you stop asking out loud. Spoken to someone who\u2019s already half-gone.',
+      capTitle: 'D.Y.G.M.',
+      capMeta: 'dir. Laila Petra · 2022',
+      capTime: '3:19',
+      embeddable: true
+    },
+    {
+      id: 'h9L91mFvWbc',
+      title: 'Back and Forth.',
+      desc: 'A crumbling romance bound by substance and false intent — the loop, the comfort, the bitter truth.',
+      capTitle: 'Back and Forth',
+      capMeta: 'dir. Roisin · 2021',
+      capTime: '04:13',
+      embeddable: true
+    },
+    {
+      id: 'ZvnbiMk8KwQ',
+      title: 'Want It All.',
+      desc: 'Hunger as a baseline — no half-measures, no quiet ambition. Either everything or nothing at all.',
+      capTitle: 'Want It All',
+      capMeta: 'dir. Federico Rambaldi · 2022',
+      capTime: '',
+      embeddable: false
+    },
+    {
+      id: 'PIOADiieLN4',
+      title: 'Relapse.',
+      desc: 'The slow drift back to what you swore you were done with. Old habits dressed up as comfort.',
+      capTitle: 'Relapse',
+      capMeta: 'dir. Federico Rambaldi · 2023',
+      capTime: '',
+      embeddable: true
+    },
+  ];
+
+    const stage    = carousel.querySelector('[data-watch-stage]');
+    const titleEl  = carousel.querySelector('[data-watch-title]');
+    const descEl   = carousel.querySelector('[data-watch-desc]');
+    const capT     = carousel.querySelector('[data-watch-cap-title]');
+    const capM     = carousel.querySelector('[data-watch-cap-meta]');
+    const capTime  = carousel.querySelector('[data-watch-cap-time]');
+    const curEl    = carousel.querySelector('[data-watch-cur]');
+    const totalEl  = carousel.querySelector('[data-watch-total]');
+    const prevBtn  = carousel.querySelector('[data-watch-prev]');
+    const nextBtn  = carousel.querySelector('[data-watch-next]');
+
+    totalEl.textContent = String(tracks.length).padStart(2, '0');
+
+    let index = 0;
+
+    const buildPoster = (track) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'video-poster';
+      btn.setAttribute('aria-label', `Play ScoobE — ${track.capTitle}`);
+      btn.style.backgroundImage =
+        `url('https://i.ytimg.com/vi/${track.id}/maxresdefault.jpg'),` +
+        `url('https://i.ytimg.com/vi/${track.id}/hqdefault.jpg')`;
+      btn.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${track.id}?rel=0&autoplay=1&modestbranding=1&playsinline=1`;
+        iframe.title = `ScoobE — ${track.capTitle}`;
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        btn.replaceWith(iframe);
+      }, { once: true });
+      return btn;
+    };
+
+    const render = (animate) => {
+      const track = tracks[index];
+
+      const apply = () => {
+        titleEl.textContent = track.title;
+        descEl.textContent  = track.desc;
+        capT.textContent    = track.capTitle;
+        capM.textContent    = track.capMeta || '';
+        capTime.textContent = track.capTime || '';
+        curEl.textContent   = String(index + 1).padStart(2, '0');
+        stage.replaceChildren(buildPoster(track));
+      };
+
+      if (!animate) { apply(); return; }
+      carousel.classList.add('swapping');
+      setTimeout(() => {
+        apply();
+        carousel.classList.remove('swapping');
+      }, 250);
+    };
+
+    const go = (delta) => {
+      index = (index + delta + tracks.length) % tracks.length;
+      render(true);
+    };
+
+    prevBtn.addEventListener('click', () => go(-1));
+    nextBtn.addEventListener('click', () => go(1));
+
+    // arrow-key support when the watch section is on screen
+    let inView = false;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        entries.forEach(e => { inView = e.isIntersecting; });
+      }, { threshold: 0.35 }).observe(carousel);
+    }
+    document.addEventListener('keydown', (e) => {
+      if (!inView) return;
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1);  }
+    });
+
+    render(false);
+  })();
 
   // hero "now playing" → toggle the YouTube video over the hero background.
   (() => {
