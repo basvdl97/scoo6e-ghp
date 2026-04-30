@@ -297,7 +297,6 @@
     color: var(--cream);
     outline: none;
   }
-  .hero.playing button.hero-meta { opacity: 0; pointer-events: none; }
   .hero-meta .play-glyph {
     position: relative;
     width: 22px;
@@ -325,8 +324,16 @@
     height: 8px;
     margin-left: 1px;
     fill: currentColor;
-    display: block;
   }
+  .hero-meta .play-glyph .icon-play  { display: block; }
+  .hero-meta .play-glyph .icon-pause { display: none; margin-left: 0; }
+  .hero.playing .hero-meta .play-glyph .icon-play  { display: none; }
+  .hero.playing .hero-meta .play-glyph .icon-pause { display: block; }
+  .hero.playing .hero-meta .play-glyph {
+    background: var(--rust);
+    color: var(--cream);
+  }
+  .hero.playing .hero-meta .play-glyph::after { animation: none; opacity: 0; }
   button.hero-meta:hover .play-glyph,
   button.hero-meta:focus-visible .play-glyph {
     background: var(--rust);
@@ -671,12 +678,13 @@
   <div class="hero-content">
     <div class="hero-spacer"></div>
     <div class="hero-title-block">
-      <button type="button" class="hero-meta" data-open-video
-              aria-label="Play music video — Back and Forth">
+      <button type="button" class="hero-meta" data-toggle-video
+              aria-label="Play music video — Back and Forth" aria-pressed="false">
         <span class="play-glyph" aria-hidden="true">
-          <svg viewBox="0 0 12 14"><path d="M0 0v14l12-7z"/></svg>
+          <svg class="icon-play" viewBox="0 0 12 14"><path d="M0 0v14l12-7z"/></svg>
+          <svg class="icon-pause" viewBox="0 0 12 14"><path d="M1 0h3v14H1zM8 0h3v14H8z"/></svg>
         </span>
-        <span>Now playing —</span>
+        <span class="meta-label">Now playing —</span>
         <span class="meta-track">Back and Forth</span>
       </button>
       <h1 class="hero-title">Scoob<span class="ital">E</span>.</h1>
@@ -830,16 +838,15 @@
     }, { once: true });
   });
 
-  // hero "now playing" → swap the background image for the YouTube video, in place.
+  // hero "now playing" → toggle the YouTube video over the hero background.
   (() => {
     const hero    = document.querySelector('.hero');
     const mount   = hero && hero.querySelector('.hero-video');
-    const trigger = document.querySelector('[data-open-video]');
+    const trigger = document.querySelector('[data-toggle-video]');
     if (!hero || !mount || !trigger) return;
     const VIDEO_SRC = 'https://www.youtube-nocookie.com/embed/h9L91mFvWbc?rel=0&autoplay=1&modestbranding=1&playsinline=1&controls=1';
 
-    trigger.addEventListener('click', () => {
-      if (hero.classList.contains('playing')) return;
+    const play = () => {
       const iframe = document.createElement('iframe');
       iframe.src = VIDEO_SRC;
       iframe.title = 'ScoobE — Back and Forth';
@@ -847,6 +854,20 @@
       iframe.setAttribute('allowfullscreen', '');
       mount.replaceChildren(iframe);
       hero.classList.add('playing');
+      trigger.setAttribute('aria-pressed', 'true');
+      trigger.setAttribute('aria-label', 'Stop music video — Back and Forth');
+    };
+
+    const stop = () => {
+      mount.replaceChildren(); // unmount iframe to fully stop audio + video
+      hero.classList.remove('playing');
+      trigger.setAttribute('aria-pressed', 'false');
+      trigger.setAttribute('aria-label', 'Play music video — Back and Forth');
+    };
+
+    trigger.addEventListener('click', () => {
+      if (hero.classList.contains('playing')) stop();
+      else play();
     });
   })();
 
